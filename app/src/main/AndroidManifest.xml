@@ -14,6 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataPasien">
         <activity
+            android:name=".TambahPasienActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditPasienActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
         <activity

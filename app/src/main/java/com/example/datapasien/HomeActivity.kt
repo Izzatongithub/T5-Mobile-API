@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.datapasien.adapter.PasienAdapter
+import com.example.datapasien.model.PasienModel
 import com.example.datapasien.network.RetrofitClient
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
@@ -26,6 +28,9 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var rvPasien: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var pasienAdapter: PasienAdapter
+
+    private lateinit var fabAdd: FloatingActionButton
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,19 +45,37 @@ class HomeActivity : AppCompatActivity() {
 
         rvPasien = findViewById(R.id.rvPasien)
         progressBar = findViewById(R.id.progressBar)
+        fabAdd = findViewById(R.id.fabAdd)
 
         rvPasien.layoutManager = LinearLayoutManager(this)
 
         // Inisialisasi Adapter dengan lambda untuk handle klik
         pasienAdapter = PasienAdapter(
             onEditClick = { pasien ->
-                Toast.makeText(this, "Edit: ${pasien.nama}", Toast.LENGTH_SHORT).show()
-            },
+                // Buka EditPasienActivity dengan membawa data pasien yang akan diedit
+                val intent = Intent(this, EditPasienActivity::class.java).apply {
+                    putExtra("PASIEN_ID", pasien.id)
+                    putExtra("PASIEN_NAMA", pasien.nama)
+                    putExtra("PASIEN_JENIS_KELAMIN", pasien.jenis_kelamin)
+                    putExtra("PASIEN_TANGGAL_LAHIR", pasien.tanggal_lahir)
+                    putExtra("PASIEN_ALAMAT", pasien.alamat)
+                    putExtra("PASIEN_TELEPON", pasien.no_telepon)
+                }
+                startActivity(intent)            },
             onDeleteClick = { pasien ->
-                Toast.makeText(this, "Hapus: ${pasien.nama}", Toast.LENGTH_SHORT).show()
+                showDeleteConfirmation(pasien)
             }
         )
         rvPasien.adapter = pasienAdapter
+
+        // Setup tombol tambah data
+        fabAdd.setOnClickListener {
+
+            val intent =
+                Intent(this, TambahPasienActivity::class.java)
+
+            startActivity(intent)
+        }
 
         // Setup tombol logout
         val btnLogout = findViewById<Button>(R.id.btnLogout)
@@ -61,6 +84,11 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // Panggil fungsi untuk ambil data
+        fetchDataPasien()
+    }
+
+    override fun onResume() {
+        super.onResume()
         fetchDataPasien()
     }
 
@@ -101,6 +129,60 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun showDeleteConfirmation(pasien: PasienModel) {
+        AlertDialog.Builder(this)
+            .setTitle("Konfirmasi Hapus")
+            .setMessage("Apakah Anda yakin ingin menghapus ${pasien.nama}?")
+            .setPositiveButton("Hapus") { dialog, _ ->
+                // User klik Hapus
+                deletePasien(pasien)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Batal") { dialog, _ ->
+                // User klik Batal
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun deletePasien(pasien: PasienModel) {
+        val id = pasien.id ?: run {
+            showMessage("ID pasien tidak valid")
+            return
+        }
+
+        // Ambil token untuk dikirim ke API
+        val prefs = getSharedPreferences("auth", MODE_PRIVATE)
+        val token = prefs.getString("token", "")
+
+        if (token.isNullOrEmpty()) {
+            showMessage("Sesi habis, silakan login ulang")
+            logout()
+            return
+        }
+
+        lifecycleScope.launch {
+            showLoading(true)
+
+            try {
+                // Tambahkan "Bearer " + token sesuai definisi di ApiService
+                val response = RetrofitClient.apiService.deletePasien("Bearer $token", id)
+
+                if (response.isSuccessful) {
+                    showMessage("Data berhasil dihapus")
+                    // Refresh data setelah delete
+                    fetchDataPasien()
+                } else {
+                    showMessage("Gagal menghapus data: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                showMessage("Error: ${e.message}")
+            } finally {
+                showLoading(false)
+            }
+        }
+    }
+
     private fun showLogoutConfirmation() {
         AlertDialog.Builder(this)
             .setTitle("Konfirmasi Logout")
@@ -117,6 +199,10 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun logout() {

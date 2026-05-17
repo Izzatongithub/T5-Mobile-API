@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F9">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dimTheme"
+        android:padding="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tambah Pasien"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/etNama"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Nama Pasien"
+                android:background="@android:drawable/edit_text"
+                android:paddingStart="16dp"
+                android:inputType="textPersonName"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/etTanggalLahir"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Tanggal Lahir"
+                android:background="@android:drawable/edit_text"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/etJenisKelamin"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Jenis Kelamin"
+                android:background="@android:drawable/edit_text"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/etAlamat"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Alamat"
+                android:background="@android:drawable/edit_text"
+                android:paddingStart="16dp"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/etNoTelepon"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="No Telepon"
+                android:background="@android:drawable/edit_text"
+                android:paddingStart="16dp"
+                android:inputType="phone"
+                android:maxLength="15"
+                android:layout_marginBottom="16dp"/>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="SIMPAN"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:backgroundTint="@color/dimTheme" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+

@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="dimTheme">#22303c</color>
+    <color name="btnColorGeneral">#6ea6bd</color>
 </resources>
